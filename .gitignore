@@ -1,0 +1,8 @@
+# stack
+.stack-work/
+*~
+
+# mac
+.DS_Store
+.AppleDouble
+.LSOverride

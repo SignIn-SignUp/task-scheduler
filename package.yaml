@@ -1,0 +1,39 @@
+name:                task-scheduler
+version:             0.1.0.0
+github:              "SignIn-SignUp/task-scheduler"
+license:             BSD3
+author:              "SignIn-SignUp"
+maintainer:          "-"
+copyright:           "2021 SignIn-SignUp"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+synopsis:            A module for scheduling assignments with constraints.
+category:            Scheduler
+description:         Please see the README on GitHub at <https://github.com/SignIn-SignUp/task-scheduler#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- algebraic-graphs
+- containers
+
+library:
+  source-dirs: src
+
+tests:
+  task-schduler-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - task-scheduler
+    - tasty
+    - tasty-hunit
+    - tasty-smallcheck
+    - tasty-quickcheck
+    

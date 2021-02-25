@@ -1,0 +1,61 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.3.
+--
+-- see: https://github.com/sol/hpack
+
+name:           task-scheduler
+version:        0.1.0.0
+synopsis:       A module for scheduling assignments with constraints.
+description:    Please see the README on GitHub at <https://github.com/SignIn-SignUp/task-scheduler#readme>
+category:       Scheduler
+homepage:       https://github.com/SignIn-SignUp/task-scheduler#readme
+bug-reports:    https://github.com/SignIn-SignUp/task-scheduler/issues
+author:         SignIn-SignUp
+maintainer:     -
+copyright:      2021 SignIn-SignUp
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/SignIn-SignUp/task-scheduler
+
+library
+  exposed-modules:
+      Constraints
+      Scheduler
+  other-modules:
+      Paths_task_scheduler
+  hs-source-dirs:
+      src
+  build-depends:
+      algebraic-graphs
+    , base >=4.7 && <5
+    , containers
+  default-language: Haskell2010
+
+test-suite task-schduler-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      ConstraintsImpl
+      TestData
+      Paths_task_scheduler
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      algebraic-graphs
+    , base >=4.7 && <5
+    , containers
+    , task-scheduler
+    , tasty
+    , tasty-hunit
+    , tasty-quickcheck
+    , tasty-smallcheck
+  default-language: Haskell2010
