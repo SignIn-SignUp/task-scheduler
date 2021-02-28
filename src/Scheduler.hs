@@ -25,8 +25,14 @@ data Cond a = a :? a
 True ? (x :? _)  = x
 False ? (_ :? y) = y
 
+
+-- |  An Assingment has:
+    --
+    -- * id = **i**
+    -- * constraints = **c**
 data Assignment i c
-  = -- |  An Assingment has:
+  =
+    -- |  AS is the only constructor of Assignment:
     --
     -- * id = **i**
     -- * constraints = **c**
@@ -52,13 +58,22 @@ c (AS _ c ) = c
 i :: Assignment i c -> i
 i (AS i _ ) = i
 
--- | Takes Foldable of Assignments and retruns a list of Assignments\\
---   which have no colliding constraints
+-- |  Takes Foldable of Assignments and retruns a list of Assignments
+--    which have no colliding constraints. \\
+--    'minimize' from 'Constraints' is used to select the Constraints
+--    of the respective Assignment. \\
+--    It is given in that order:
+--
+--    * the Constraints to minimize
+--    * the colliding Constraints
+--    * the "alike" Constraints.\\
+--      The ones of which the respective Assignments a and b satisfy (like a b)\\
+--      with 'like' from 'Like'
 resolve :: (Ord i, Ord c, C.Constraints c, Foldable f, Like i) => f (Assignment i c) -> [Assignment i c]
 resolve = resolve_ . constructGraph
 
--- | Takes Undirectional Graph of Assignments and retruns list of Assignments\\
---   which have no colliding constraints
+-- |  Takes Undirectional Graph of Assignments and retruns list of Assignments\\
+--    which have no colliding constraints.
 resolve_ :: (Ord i, Ord c, C.Constraints c, Like i) => U.Graph (Assignment i c) -> [Assignment i c]
 resolve_  g
   | U.isEmpty g = []
@@ -66,11 +81,11 @@ resolve_  g
     where toCList = map c
           alikeLst = \a -> toCList $ filter (~~a) $ U.vertexList g
 
--- |  Does not work on empty lists
+-- |  Does not work on empty lists. \\
 --    NOTE: change to function that can handle empty lists
 tupleListMin :: [(a,[b])] -> (a,[b])
 tupleListMin [x] = x
-tupleListMin (x:xs) = (length.snd) x > (length . snd ) o ? x :? o
+tupleListMin (x:xs) = (length . snd) x > (length . snd) o ? x :? o
   where o = tupleListMin xs
 
 -- | Removes a Vertex and neighbouring conflicting constraints from the graph and vertecies.
@@ -80,12 +95,12 @@ selectedVertex v@(AS iv ic) g = U.induce (\(AS i c)-> (not . C.null) c) . foldr 
 
 
 
--- | constructs a graph where all the Vertecies contain Assignments \\
---   and are connected to the Assignments they have commone elements with
+-- |  Constructs a graph where all the Vertecies contain Assignments \\
+--    and are connected to the Assignments they have commone elements with
 constructGraph :: (Ord i, Ord c, Foldable f, C.Constraints c) => f (Assignment i c) -> U.Graph (Assignment i c)
 constructGraph = foldr insertVertex U.empty . foldr (\(AS i c) a -> AS i c : a) []
 
--- | inserts a Vertex into the graph connecting it with the Vertecies\\
+-- | inserts a Vertex into the graph connecting it with the Vertecies \\
 --   which have intersecting elements
 insertVertex :: (Ord c, Ord i, C.Constraints c) => Assignment i c -> U.Graph (Assignment i c) -> U.Graph (Assignment i c)
 insertVertex a@(AS i c) g

@@ -28,24 +28,24 @@ False ? (_ :? y) = y
 class Constraints a where
   {-# MINIMAL select, size, conflicts, (without | (\#\)) #-}
 
-  -- |  Retruns the conflicting 'Constraints' of\\
-  --    a and b.
-  --    conflicts is commutative:
+  -- |  Retruns the conflicting 'Constraints' of
+  --    a and b. \\
+  --    conflicts is commutative
   --
   --    prop> conflicts a b =  conflicts b a
   conflicts :: a -> a -> a
 
-  -- |  Retruns the size.\\
+  -- |  Retruns the size. \\
   --    (Number of contained elements)
   size :: a -> Integer
 
   -- |  Returns minimal 'Constraints'.
   select :: a -> a
 
-  -- |  Returns minimal 'Constraints' taking the given\\
-  --    ones into account. The default implementation\\
-  --    only takes the colliding constraints into account.\\
-  --    If the third argument should be taken into account\\
+  -- |  Returns minimal 'Constraints' taking the given
+  --    ones into account. \\ The default implementation
+  --    only takes the colliding constraints into account. \\
+  --    If the third argument should be taken into account
   --    it musst be implemented.
   minimize :: (Foldable f) => a -> [a] -> f a -> a
   minimize a [] _ = select a
@@ -57,7 +57,7 @@ class Constraints a where
   null :: a -> Bool
   null = (==) 0 . size
 
-  -- |  Removes conflicting Constrains in b from a.\\
+  -- |  Removes conflicting Constrains in b from a. \\
   --    Is a synonym for '\#\'
   without :: a -> a -> a
   without a b = a \#\ b
