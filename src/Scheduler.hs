@@ -1,7 +1,7 @@
 {-# LANGUAGE ExistentialQuantification #-}
 
 module Scheduler
-  ( schedule,
+  ( resolve,
     Assignment(AS)
   )
 where
@@ -54,15 +54,15 @@ i (AS i _ ) = i
 
 -- | Takes Foldable of Assignments and retruns a list of Assignments\\
 --   which have no colliding constraints
-schedule :: (Ord i, Ord c, C.Constraints c, Foldable f, Like i) => f (Assignment i c) -> [Assignment i c]
-schedule = schedule_ . constructGraph
+resolve :: (Ord i, Ord c, C.Constraints c, Foldable f, Like i) => f (Assignment i c) -> [Assignment i c]
+resolve = resolve_ . constructGraph
 
--- | Takes Foldable of Assignments and retruns Foldable of Assignments\\
+-- | Takes Undirectional Graph of Assignments and retruns list of Assignments\\
 --   which have no colliding constraints
-schedule_ :: (Ord i, Ord c, C.Constraints c, Like i) => U.Graph (Assignment i c) -> [Assignment i c]
-schedule_  g
+resolve_ :: (Ord i, Ord c, C.Constraints c, Like i) => U.Graph (Assignment i c) -> [Assignment i c]
+resolve_  g
   | U.isEmpty g = []
-  | otherwise = (\a -> a : schedule_  (selectedVertex a g)) . (\(a@(AS i c),lst) -> AS i $ C.minimize c (toCList lst) $ alikeLst a ) . tupleListMin $ U.adjacencyList g
+  | otherwise = (\a -> a : resolve_  (selectedVertex a g)) . (\(a@(AS i c),lst) -> AS i $ C.minimize c (toCList lst) $ alikeLst a ) . tupleListMin $ U.adjacencyList g
     where toCList = map c
           alikeLst = \a -> toCList $ filter (~~a) $ U.vertexList g
 
