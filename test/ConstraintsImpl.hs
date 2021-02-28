@@ -5,8 +5,8 @@ module ConstraintsImpl
 where
 
 
-import           Constraints           (Constraints (conflicts, select, size, without))
-import           Test.Tasty.QuickCheck (Arbitrary (arbitrary))
+import Scheduler.Constraints (Constraints(conflicts, select, size, without))
+import Test.Tasty.QuickCheck (Arbitrary(arbitrary))
 
 newtype TestAssingnments = TA [Integer] deriving (Show)
 

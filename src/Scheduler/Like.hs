@@ -1,7 +1,8 @@
-module Like
+module Scheduler.Like
 (
     Like(..)
-) where
+)
+where
 
 class Like a where
     {-# MINIMAL (like | (~~)) #-}

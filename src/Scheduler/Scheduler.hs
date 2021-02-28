@@ -1,16 +1,18 @@
 {-# LANGUAGE ExistentialQuantification #-}
 
-module Scheduler
-  ( resolve,
-    Assignment(AS)
-  )
+module Scheduler.Scheduler
+(
+
+  resolve
+, Assignment(AS)
+)
 where
 
 import qualified Algebra.Graph.Undirected as U
-import           Constraints              (Constraints ((\#\)))
-import qualified Constraints              as C
-import qualified Data.Set                 as S
-import           Like                     (Like (like, (~~)))
+import qualified Data.Set as S (toList)
+import Scheduler.Constraints (Constraints((\#\)))
+import qualified Scheduler.Constraints as C
+import Scheduler.Like (Like(like, (~~)))
 
 
 

@@ -27,9 +27,9 @@ source-repository head
 
 library
   exposed-modules:
-      Constraints
-      Like
-      Scheduler
+      Scheduler.Constraints
+      Scheduler.Like
+      Scheduler.Scheduler
   other-modules:
       Paths_task_scheduler
   hs-source-dirs:

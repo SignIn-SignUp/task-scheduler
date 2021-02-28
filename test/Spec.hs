@@ -1,13 +1,13 @@
-import           Test.Tasty            (TestTree, defaultMain, testGroup)
-import           Test.Tasty.HUnit      (assertBool, testCase, (@?=))
-import           Test.Tasty.QuickCheck as QC (testProperty, (==>))
+import Test.Tasty (TestTree, defaultMain, testGroup)
+import Test.Tasty.HUnit (assertBool, testCase, (@?=))
+import Test.Tasty.QuickCheck as QC (testProperty, (==>))
 -- import           Test.Tasty.SmallCheck as SC (testProperty, (==>)) maybe nclude smallcheck tests
 
-import           Constraints           (Constraints (conflicts, minimize, select, without, (\#\)))
-import           ConstraintsImpl       (TestAssingnments)
-import qualified ConstraintsImpl
-import           Scheduler             (schedule)
-import           TestData              (ringTestData, singletonsTestData)
+import ConstraintsImpl (TestAssingnments)
+import Scheduler.Constraints
+       (Constraints(conflicts, minimize, select, without, (\#\)))
+import Scheduler.Scheduler (resolve)
+import TestData (ringTestData, singletonsTestData)
 
 tests :: TestTree
 tests = testGroup "Tests" [properties, unitTests]
@@ -36,11 +36,11 @@ schedulerUnit :: TestTree
 schedulerUnit = testGroup "Schduler"
   [
     testCase "Scheduled comparison ring (same Length)" $
-      length (schedule ringTestData) @?= length ringTestData
+      length (resolve ringTestData) @?= length ringTestData
   , testCase "Scheduled comparison singletons (same Length)" $
-      length (schedule singletonsTestData ) @?= length singletonsTestData
+      length (resolve singletonsTestData ) @?= length singletonsTestData
   , testCase "List comparison contradicting (not same length)" $
-      assertBool "Length of scheduled contradiction was eqal" $ length (schedule singletonsTestData ) == length singletonsTestData
+      assertBool "Length of scheduled contradiction was eqal" $ length (resolve singletonsTestData ) == length singletonsTestData
   ]
 
 main :: IO ()

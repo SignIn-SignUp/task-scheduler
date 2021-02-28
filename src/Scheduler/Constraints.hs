@@ -1,15 +1,16 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-module Constraints
+module Scheduler.Constraints
 (
-    Constraints(..)
-) where
+  Constraints(..)
+)
+where
 
 
 
 
-import           GHC.Base (Bool (False, True), Eq ((==)), (.))
-import           GHC.Num  (Integer)
-import           Prelude  (Foldable)
+import GHC.Base (Bool(False, True), Eq((==)), (.))
+import GHC.Num (Integer)
+import Prelude (Foldable)
 
 infixl 2 \#\
 

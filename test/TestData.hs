@@ -6,10 +6,10 @@ module TestData
     forestTestData
 ) where
 
-import           Constraints     (Constraints)
-import           ConstraintsImpl (TestAssingnments (..))
-import           Like            (Like (..))
-import           Scheduler       (Assignment (..))
+import ConstraintsImpl (TestAssingnments(..))
+import Scheduler.Constraints (Constraints)
+import Scheduler.Like (Like(..))
+import Scheduler.Scheduler (Assignment(..))
 
 instance Like Integer where
   (~~) a b = a == b
