@@ -26,7 +26,7 @@ qcConstraints = testGroup "Constraints"
   , QC.testProperty "wihtout a b == a \\#\\ b" $
       \ta1 ta2 -> without (ta1::TestAssingnments) (ta2::TestAssingnments) == (ta1 \#\ ta2)
   , QC.testProperty "select a == minimize a []" $
-      \a -> select (a::TestAssingnments) == minimize a []
+      \a -> select (a::TestAssingnments) == minimize a [] []
   ]
 
 unitTests :: TestTree

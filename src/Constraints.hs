@@ -9,6 +9,7 @@ module Constraints
 
 import           GHC.Base (Bool (False, True), Eq ((==)), (.))
 import           GHC.Num  (Integer)
+import           Prelude  (Foldable)
 
 infixl 2 \#\
 
@@ -41,12 +42,15 @@ class Constraints a where
   -- |  Returns minimal 'Constraints'.
   select :: a -> a
 
-  -- |  Returns minimal 'Constraints'
-  --    considdering ones of the list.
-  minimize :: a -> [a] -> a
-  minimize a [] = select a
-  minimize a (x:xs) = null r ? select s :? r
-    where r = minimize s xs
+  -- |  Returns minimal 'Constraints' taking the given\\
+  --    ones into account. The default implementation\\
+  --    only takes the colliding constraints into account.\\
+  --    If the third argument should be taken into account\\
+  --    it musst be implemented.
+  minimize :: (Foldable f) => a -> [a] -> f a -> a
+  minimize a [] _ = select a
+  minimize a (x:xs) f = null r ? select s :? r
+    where r = minimize s xs f
           s = a \#\ x
 
   -- |  Checks if size > 0
@@ -61,4 +65,3 @@ class Constraints a where
   -- | Is a synonym for 'without'
   (\#\) :: a -> a -> a
   (\#\) a b = a `without` b
-

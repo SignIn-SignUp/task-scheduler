@@ -10,6 +10,7 @@ import           Test.Tasty.QuickCheck (Arbitrary (arbitrary))
 
 newtype TestAssingnments = TA [Integer] deriving (Show)
 
+
 instance Arbitrary TestAssingnments where
   arbitrary = do TA <$> arbitrary
 

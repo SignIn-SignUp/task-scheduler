@@ -10,6 +10,7 @@ import qualified Algebra.Graph.Undirected as U
 import           Constraints              (Constraints ((\#\)))
 import qualified Constraints              as C
 import qualified Data.Set                 as S
+import           Like                     (Like (like, (~~)))
 
 
 
@@ -41,6 +42,9 @@ instance (Ord i, Eq i, Eq c) => Ord (Assignment i c) where
 instance (Show i, Show c) => Show (Assignment i c) where
   show (AS a b) = "Assignment " <> show a <> "  " <> show b
 
+instance (Like i) => Like (Assignment i c) where
+  like (AS i1 _) (AS i2 _) = like i1 i2
+
 
 c :: Assignment i c -> c
 c (AS _ c ) = c
@@ -48,18 +52,19 @@ c (AS _ c ) = c
 i :: Assignment i c -> i
 i (AS i _ ) = i
 
--- | Takes Foldable of Assignments and retruns Foldable of Assignments\\
+-- | Takes Foldable of Assignments and retruns a list of Assignments\\
 --   which have no colliding constraints
-schedule :: (Ord i, Ord c, C.Constraints c, Foldable f) => f (Assignment i c) -> [Assignment i c]
+schedule :: (Ord i, Ord c, C.Constraints c, Foldable f, Like i) => f (Assignment i c) -> [Assignment i c]
 schedule = schedule_ . constructGraph
 
 -- | Takes Foldable of Assignments and retruns Foldable of Assignments\\
 --   which have no colliding constraints
-schedule_ :: (Ord i, Ord c, C.Constraints c) => U.Graph (Assignment i c) -> [Assignment i c]
+schedule_ :: (Ord i, Ord c, C.Constraints c, Like i) => U.Graph (Assignment i c) -> [Assignment i c]
 schedule_  g
   | U.isEmpty g = []
-  | otherwise = (\a -> a : schedule_  (selectedVertex a g)) . (\(a@(AS i c),lst) -> AS i (C.minimize c $ toCList lst) ) . tupleListMin $ U.adjacencyList g
+  | otherwise = (\a -> a : schedule_  (selectedVertex a g)) . (\(a@(AS i c),lst) -> AS i $ C.minimize c (toCList lst) $ alikeLst a ) . tupleListMin $ U.adjacencyList g
     where toCList = map c
+          alikeLst = \a -> toCList $ filter (~~a) $ U.vertexList g
 
 -- |  Does not work on empty lists
 --    NOTE: change to function that can handle empty lists

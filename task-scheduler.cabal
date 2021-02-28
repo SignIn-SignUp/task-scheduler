@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Constraints
+      Like
       Scheduler
   other-modules:
       Paths_task_scheduler

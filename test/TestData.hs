@@ -8,9 +8,11 @@ module TestData
 
 import           Constraints     (Constraints)
 import           ConstraintsImpl (TestAssingnments (..))
+import           Like            (Like (..))
 import           Scheduler       (Assignment (..))
 
-
+instance Like Integer where
+  (~~) a b = a == b
 
 ringTestData :: [Assignment Integer TestAssingnments]
 ringTestData =
