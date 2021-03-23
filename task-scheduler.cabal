@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           task-scheduler
-version:        0.1.0.0
+version:        0.1.1.0
 synopsis:       A module for scheduling assignments with constraints.
 description:    Please see the README on GitHub at <https://github.com/SignIn-SignUp/task-scheduler#readme>
 category:       Scheduler
@@ -27,9 +27,9 @@ source-repository head
 
 library
   exposed-modules:
+      Scheduler.Assignment
       Scheduler.Constraints
       Scheduler.Like
-      Scheduler.Scheduler
   other-modules:
       Paths_task_scheduler
   hs-source-dirs:

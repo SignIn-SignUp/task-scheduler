@@ -4,9 +4,9 @@ import Test.Tasty.QuickCheck as QC (testProperty, (==>))
 -- import           Test.Tasty.SmallCheck as SC (testProperty, (==>)) maybe nclude smallcheck tests
 
 import ConstraintsImpl (TestAssingnments)
+import Scheduler.Assignment (resolve)
 import Scheduler.Constraints
        (Constraints(conflicts, minimize, select, without, (\#\)))
-import Scheduler.Scheduler (resolve)
 import TestData (ringTestData, singletonsTestData)
 
 tests :: TestTree

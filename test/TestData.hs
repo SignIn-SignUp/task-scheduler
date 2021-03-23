@@ -7,9 +7,9 @@ module TestData
 ) where
 
 import ConstraintsImpl (TestAssingnments(..))
+import Scheduler.Assignment (Assignment(..))
 import Scheduler.Constraints (Constraints)
 import Scheduler.Like (Like(..))
-import Scheduler.Scheduler (Assignment(..))
 
 instance Like Integer where
   (~~) a b = a == b
