@@ -1,6 +1,6 @@
 # task-scheduler
 
-This library provides **resolve** in [*Assignment.hs*](src/Assignment.hs) 
+This library provides **resolve** in [*Assignment.hs*](src/Scheduler/Assignment.hs) 
 that can create a conflict free collection of given assignments, compliant with the respective constraints.
 
 ## Algorithm
@@ -9,7 +9,7 @@ of the algorithm is welcome.
 
 ## Usage
 
-To be able to use the ```resolve```method from [*Assignment.hs*](src/Assignment.hs) the type
+To be able to use the ```resolve```method from [*Assignment.hs*](src/Scheduler/Assignment.hs) the type
 **Assignment** must be instancieated.
 ```{haskell}
 data Assignment i c
@@ -20,7 +20,7 @@ data Assignment i c
     AS i c
 ```
 Also the **i** and **c** musst provice instances of **Ord** and **c** of **Constraint**
-from [*Constraints.hs*](src/Constraints.hs).
+from [*Constraints.hs*](src/Scheduler/Constraints.hs).
 ```{haskell}
 class Constraints a where
   {-# MINIMAL select, size, conflicts, (without | (\#\)) #-}
