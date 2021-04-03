@@ -1,7 +1,7 @@
 # task-scheduler
 
-This library provides **schedule** in [*Scheduler.hs*](src/Scheduler.hs) 
-that can create a Schedule of given assignments and compliant with the respective constraints.
+This library provides **resolve** in [*Assignment.hs*](src/Assignment.hs) 
+that can create a conflict free collection of given assignments, compliant with the respective constraints.
 
 ## Algorithm
 This library will implement a greeedy naive algorithm at first. Improvment
@@ -9,7 +9,7 @@ of the algorithm is welcome.
 
 ## Usage
 
-To be able to use the ```schedule```method from [*Scheduler.hs*](src/Scheduler.hs) the type
+To be able to use the ```resolve```method from [*Assignment.hs*](src/Assignment.hs) the type
 **Assignment** must be instancieated.
 ```{haskell}
 data Assignment i c
