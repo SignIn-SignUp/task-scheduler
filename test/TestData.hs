@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 module TestData
 (
     ringTestData,
@@ -10,9 +11,15 @@ import ConstraintsImpl (TestAssingnments(..))
 import Scheduler.Assignment (Assignment(..))
 import Scheduler.Constraints (Constraints)
 import Scheduler.Like (Like(..))
+import Test.Tasty.QuickCheck (Arbitrary(arbitrary))
 
 instance Like Integer where
   (~~) a b = a == b
+
+instance Arbitrary (Assignment Integer TestAssingnments) where
+    arbitrary = do AS <$> arbitrary <*> arbitrary
+
+
 
 ringTestData :: [Assignment Integer TestAssingnments]
 ringTestData =

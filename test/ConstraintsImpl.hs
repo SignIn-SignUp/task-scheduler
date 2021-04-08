@@ -1,11 +1,14 @@
 module ConstraintsImpl
 (
     TestAssingnments(TA)
+  , hasConflicts
 )
 where
 
 
-import Scheduler.Constraints (Constraints(conflicts, select, size, without))
+import Prelude hiding (null)
+import Scheduler.Constraints
+       (Constraints(conflicts, null, select, size, without, (\#\)))
 import Test.Tasty.QuickCheck (Arbitrary(arbitrary))
 
 newtype TestAssingnments = TA [Integer] deriving (Show)
@@ -32,4 +35,13 @@ instance Eq TestAssingnments where
     (==) (TA a) (TA b) = a == b
 
 instance Ord TestAssingnments where
-  (<=) (TA a) (TA b) = a <= b
+  (<=) (TA aa@(a:as)) bb@(TA (b:bs))
+    | a == b = as <= bs
+    | otherwise = False
+  (<=) (TA []) (TA []) = True
+  (<=) _ _ = False
+
+
+hasConflicts :: Constraints a => [a] -> Bool
+hasConflicts [] = False
+hasConflicts (a:as) = not (all (null . (\#\a)) as) || hasConflicts as
