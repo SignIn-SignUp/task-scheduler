@@ -47,14 +47,15 @@ class Constraints a where
   --    ones into account. \\ The default implementation
   --    only takes the colliding constraints into account. \\
   --    If the third argument should be taken into account
-  --    it musst be implemented.
+  --    it musst be implemented. \\ The third argument are the
+  --    similar remaining entries.
   minimize :: (Foldable f) => a -> [a] -> f a -> a
   minimize a [] _ = select a
   minimize a (x:xs) f = null r ? select s :? r
     where r = minimize s xs f
           s = a \#\ x
 
-  -- |  Checks if size > 0
+  -- |  Checks if size == 0
   null :: a -> Bool
   null = (==) 0 . size
 
