@@ -17,7 +17,6 @@ instance Arbitrary TestBenchConstraints where
   arbitrary = do TB <$> arbitrary
 
 
-
 instance Constraints TestBenchConstraints where
 
   select (TB (x:xs)) = TB [x]

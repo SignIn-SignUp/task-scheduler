@@ -86,12 +86,20 @@ resolve_ g
       )
 
 
+-- |  Picks the vertex from the list which has the least "neighbours"
+--    and the smalles constrains. \\
+--    Where the tuple can be interpreted as (Assignment,neighbours). \\
+--    &#x24D8; can only be called on non-empty lists
 pickVertex :: (Constraints c, Ord c) => [(Assignment i c, [Assignment i c])] -> (Assignment i c, [Assignment i c])
 pickVertex [] = error "Can't pick from []"
 pickVertex a = (head . sortByConstraints) $ takeW (head sortedByList) sortedByList
   where sortedByList = sortOn (\(_,l) -> length l) a
         sortByConstraints = sortOn (\(AS _ c,_) -> C.size c)
 
+-- |  Similar to takeWhile in Prelude it takes while the first Assignment
+--    has fewer or equal "neighbours" \\
+--    and smaller or equal constraints. \\
+--    Where the tuple can be interpreted as (Assignment,neighbours).
 takeW :: (Foldable t1, Foldable t2, Ord a1) => (Assignment i1 a1, t2 a2) -> [(Assignment i2 a1, t1 a3)] -> [(Assignment i2 a1, t1 a3)]
 takeW t1@(AS _ c,ls) (t2@(AS _ ec,lse):els)
           | length lse <= length ls && ec <= c = t2 : takeW  t1 els

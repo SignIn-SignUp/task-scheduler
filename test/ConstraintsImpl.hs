@@ -48,10 +48,17 @@ instance Ord TestAssingnments where
 
 
 
+
+-- |  Returns true any elements in the list have conflicts
+--    with eachother.
 hasConflicts :: C.Constraints a => [a] -> Bool
 hasConflicts [] = False
 hasConflicts (a:as) = not (all (C.null . C.conflicts a) as) || hasConflicts as
 
+-- |  Removes any conflicts of elements in the list.\\
+--    This implemetation is quite naive and slow but the returned
+--    list is conflict free. \\
+--    Therefore either an empty-list or a solution.
 removeConflictsSimple :: (C.Constraints a, Ord a) => [a] -> [a]
 removeConflictsSimple lst = if null dropped then [] else removeConflictsSimple' dropped
   where dropped = dropWhile C.null lst
@@ -61,8 +68,13 @@ removeConflictsSimple' [] = []
 removeConflictsSimple' (a:as) = a : (removeConflictsSimple' . filter (not . C.null) . map (C.\#\a)) as
 
 
-
-
+-- |  Removes any conflicts of elements in the list.\\
+--    This implemetation is expeensive and slow but the returned
+--    list is conflict free. \\
+--    Compared to 'removeConflictsSimple' this function can provide
+--    better solutions \\
+--    but is more expensive.\\
+--    As 'removeConflictsSimple' it returns either an empty list or a solution.
 removeConflictsExpensive :: (C.Constraints a, Ord a) => [a] -> [a]
 removeConflictsExpensive [] = []
 removeConflictsExpensive lst = if null sorted then [] else removeConflictsExpensive' sorted
