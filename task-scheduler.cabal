@@ -49,7 +49,7 @@ test-suite task-schduler-test
       Paths_task_scheduler
   hs-source-dirs:
       test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -main-is Spec.main
   build-depends:
       algebraic-graphs
     , base >=4.7 && <5
@@ -59,4 +59,22 @@ test-suite task-schduler-test
     , tasty-hunit
     , tasty-quickcheck
     , tasty-smallcheck
+  default-language: Haskell2010
+
+benchmark task-schduler-bench
+  type: exitcode-stdio-1.0
+  main-is: Bench.hs
+  other-modules:
+      ConstraintsBenchImpl
+      Paths_task_scheduler
+  hs-source-dirs:
+      bench
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -main-is Bench.main
+  build-depends:
+      algebraic-graphs
+    , base >=4.7 && <5
+    , containers
+    , criterion
+    , task-scheduler
+    , tasty-quickcheck
   default-language: Haskell2010

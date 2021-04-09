@@ -6,3 +6,6 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+#vs-code
+.vscode
