@@ -3,11 +3,13 @@
 module Scheduler.Assignment
   ( resolve,
     Assignment (AS),
+    pickVertex
   )
 where
 
 import qualified Algebra.Graph.Undirected as U
 import Data.Foldable (Foldable(toList))
+import Data.List (sortOn)
 import qualified Data.Set as S (toList)
 import Scheduler.Constraints (Constraints((\#\)))
 import qualified Scheduler.Constraints as C
@@ -33,6 +35,7 @@ data Assignment i c
     -- * id = **i**
     -- * constraints = **c**
     AS i c
+    deriving (Show)
 
 instance (Eq i, Eq c) => Eq (Assignment i c) where
   (==) (AS i1 fc1) (AS i2 fc2) = i1 == i2 && fc1 == fc2
@@ -42,9 +45,6 @@ instance (Ord i, Ord c, Eq i, Eq c) => Ord (Assignment i c) where
     | i1 < i2 = True
     | i1 == i2 && fc1 <= fc2 = True
     | otherwise = False
-
-instance (Show i, Show c) => Show (Assignment i c) where
-  show (AS a b) = "Assignment " <> show a <> "  " <> show b
 
 instance (Eq i) => Like (Assignment i c) where
   like (AS i1 _) (AS i2 _) = i1 == i2
@@ -67,29 +67,36 @@ i (AS i _) = i
 --      The ones of which the respective Assignments a and b satisfy (like a b)\\
 --      with 'like' from 'Like'
 resolve :: (Ord i, Ord c, C.Constraints c, Foldable f, Like i) => f (Assignment i c) -> [Assignment i c]
-resolve = resolve_ . constructGraph . toList
+resolve = resolve_ . constructGraph
 
 -- |  Takes Undirectional Graph of Assignments and retruns list of Assignments\\
 --    which have no colliding constraints.
 resolve_ :: (Ord i, Ord c, C.Constraints c, Like i) => U.Graph (Assignment i c) -> [Assignment i c]
 resolve_ g
   | U.isEmpty g = []
-  | otherwise = (\(mimzd,nbrs,gwa) -> mimzd : resolve_ (replaceWithConstraints (c mimzd) nbrs gwa)) . minimizeAndRemoveVertex g . tupleListMin $ U.adjacencyList g
+  | otherwise = (\(mimzd,nbrs,gwa) -> mimzd : resolve_ (replaceWithConstraints (c mimzd) nbrs gwa)) . minimizeAndRemoveVertex g . pickVertex $ U.adjacencyList g
   where
     toCList = map c
-    alikeLst = \a -> toCList $ filter (~~ a) $ U.vertexList g
-    minimizeAndRemoveVertex = \gr (a@(AS i c), lst) -> (AS i $ C.minimize c (toCList lst) $ alikeLst a,lst,U.removeVertex a gr)
+    alikeLst = \a gr -> toCList $ filter (~~ a) $ U.vertexList gr
+    minimizeAndRemoveVertex = \gr (a@(AS i c), lst) ->
+      (
+        AS i $ C.minimize c (toCList lst) $ alikeLst a $ U.removeVertex a gr
+      , lst
+      , U.removeVertex a gr
+      )
 
--- |  Returns the minimum of a tuplelist where the min is \\
---    the element with the least elements in the list of snd. \\
---    &#x26A0; Does not work on empty lists. \\
---      **NOTE:** change to function that can handle empty lists
-tupleListMin :: [(a, [b])] -> (a, [b])
-tupleListMin [x] = x
-tupleListMin (x : xs) = (length . snd) x > (length . snd) o ? x :? o
-  where
-    o = tupleListMin xs
 
+pickVertex :: (Constraints c, Ord c) => [(Assignment i c, [Assignment i c])] -> (Assignment i c, [Assignment i c])
+pickVertex [] = error "Can't pick from []"
+pickVertex a = (head . sortByConstraints) $ takeW (head sortedByList) sortedByList
+  where sortedByList = sortOn (\(_,l) -> length l) a
+        sortByConstraints = sortOn (\(AS _ c,_) -> C.size c)
+
+takeW :: (Foldable t1, Foldable t2, Ord a1) => (Assignment i1 a1, t2 a2) -> [(Assignment i2 a1, t1 a3)] -> [(Assignment i2 a1, t1 a3)]
+takeW t1@(AS _ c,ls) (t2@(AS _ ec,lse):els)
+          | length lse <= length ls && ec <= c = t2 : takeW  t1 els
+          | otherwise = []
+takeW _ [] = []
 
 -- |  Removes a constraints from the vetecies and then replaces the vercecies in graph.
 replaceWithConstraints :: (Ord c, Ord i, C.Constraints c) => c -> [Assignment i c] -> U.Graph (Assignment i c) -> U.Graph (Assignment i c)

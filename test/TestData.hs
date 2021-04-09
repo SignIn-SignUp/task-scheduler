@@ -20,7 +20,6 @@ instance Arbitrary (Assignment Integer TestAssingnments) where
     arbitrary = do AS <$> arbitrary <*> arbitrary
 
 
-
 ringTestData :: [Assignment Integer TestAssingnments]
 ringTestData =
     [

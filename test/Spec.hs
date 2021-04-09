@@ -6,9 +6,17 @@ module Spec
 ) where
 import Test.Tasty (TestTree, defaultMain, testGroup)
 import Test.Tasty.HUnit (assertBool, testCase, (@?=))
-import Test.Tasty.QuickCheck as QC (testProperty, (==>))
+import Test.Tasty.QuickCheck as QC (collect, testProperty, (==>))
 -- import           Test.Tasty.SmallCheck as SC (testProperty, (==>)) maybe nclude smallcheck tests
-import ConstraintsImpl (TestAssingnments, hasConflicts)
+-- import           Test.Tasty.SmallCheck as SC (testProperty, (==>)) maybe nclude smallcheck tests
+-- import           Test.Tasty.SmallCheck as SC (testProperty, (==>)) maybe nclude smallcheck tests
+-- import           Test.Tasty.SmallCheck as SC (testProperty, (==>)) maybe nclude smallcheck tests
+import ConstraintsImpl
+       ( TestAssingnments
+       , hasConflicts
+       , removeConflictsExpensive
+       , removeConflictsSimple
+       )
 import Data.List (sort)
 import Scheduler.Assignment (Assignment(AS), resolve)
 import qualified Scheduler.Constraints as C
@@ -40,9 +48,13 @@ qcAssignment :: TestTree
 qcAssignment = testGroup "Assignment"
   [
     QC.testProperty "resolve a should contain the same elments as resolve $ resolve a" $
-      \(ts::[Assignment Integer TestAssingnments]) -> sort (resolve ts) == sort (resolve $ resolve ts)
+      \(ts::[Assignment Integer TestAssingnments]) -> (\ls -> sort ls == sort (resolve ls)) $  resolve ts
   , QC.testProperty "colficts in (resolve a) == []" $
       \(ts::[Assignment Integer TestAssingnments]) -> not . hasConflicts . map (\(AS _ c) -> c) $ resolve ts
+  , QC.testProperty "resolve should have at least lenght >= greedy naive solution" $
+      \(ts::[Assignment Integer TestAssingnments]) -> (length . resolve) ts  >= (length . removeConflictsSimple . map (\(AS _ c) -> c)) ts
+  , QC.testProperty "resolve should have at least lenght >= greedy naive expensive solution" $
+      \(ts::[Assignment Integer TestAssingnments]) -> (length . resolve) ts  >= (length . removeConflictsExpensive . map (\(AS _ c) -> c)) ts
   ]
 
 

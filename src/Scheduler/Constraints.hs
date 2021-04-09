@@ -51,8 +51,9 @@ class Constraints a where
   --    similar remaining entries.
   minimize :: (Foldable f) => a -> [a] -> f a -> a
   minimize a [] _ = select a
-  minimize a (x:xs) f = null r ? select s :? r
+  minimize a (x:xs) f = null r ? select sn :? r
     where r = minimize s xs f
+          sn = null s ? a :? s
           s = a \#\ x
 
   -- |  Checks if size == 0

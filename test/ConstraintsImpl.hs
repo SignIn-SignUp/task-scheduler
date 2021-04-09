@@ -2,12 +2,15 @@ module ConstraintsImpl
 (
     TestAssingnments(TA)
   , hasConflicts
+  , removeConflictsSimple
+  , removeConflictsExpensive
 )
 where
 
 
-import Prelude hiding (null)
-import Scheduler.Constraints
+import Data.List (sort)
+import Prelude
+import qualified Scheduler.Constraints as C
        (Constraints(conflicts, null, select, size, without, (\#\)))
 import Test.Tasty.QuickCheck (Arbitrary(arbitrary))
 
@@ -19,7 +22,7 @@ instance Arbitrary TestAssingnments where
 
 
 
-instance Constraints TestAssingnments where
+instance C.Constraints TestAssingnments where
 
   select (TA (x:xs)) = TA [x]
   select x           = x
@@ -35,13 +38,39 @@ instance Eq TestAssingnments where
     (==) (TA a) (TA b) = a == b
 
 instance Ord TestAssingnments where
-  (<=) (TA aa@(a:as)) bb@(TA (b:bs))
-    | a == b = as <= bs
-    | otherwise = False
   (<=) (TA []) (TA []) = True
-  (<=) _ _ = False
+  (<=) (TA []) _ = True
+  (<=) _ (TA []) = False
+  (<=) (TA aa@(a:as)) bb@(TA (b:bs))
+    | a < b = True
+    | a == b = TA as <= TA bs
+    | otherwise = False
 
 
-hasConflicts :: Constraints a => [a] -> Bool
+
+hasConflicts :: C.Constraints a => [a] -> Bool
 hasConflicts [] = False
-hasConflicts (a:as) = not (all (null . (\#\a)) as) || hasConflicts as
+hasConflicts (a:as) = not (all (C.null . C.conflicts a) as) || hasConflicts as
+
+removeConflictsSimple :: (C.Constraints a, Ord a) => [a] -> [a]
+removeConflictsSimple lst = if null dropped then [] else removeConflictsSimple' dropped
+  where dropped = dropWhile C.null lst
+
+removeConflictsSimple' :: C.Constraints a => [a] -> [a]
+removeConflictsSimple' [] = []
+removeConflictsSimple' (a:as) = a : (removeConflictsSimple' . filter (not . C.null) . map (C.\#\a)) as
+
+
+
+
+removeConflictsExpensive :: (C.Constraints a, Ord a) => [a] -> [a]
+removeConflictsExpensive [] = []
+removeConflictsExpensive lst = if null sorted then [] else removeConflictsExpensive' sorted
+  where sorted = dropWhile C.null $ sort lst
+
+removeConflictsExpensive' :: (C.Constraints a, Ord a) => [a] -> [a]
+removeConflictsExpensive' [] = []
+removeConflictsExpensive' (a:as) = a : (removeConflictsExpensive' . sort . filter (not . C.null) . map (C.\#\a)) as
+
+
+
